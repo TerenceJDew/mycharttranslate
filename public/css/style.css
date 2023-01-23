@@ -1,0 +1,166 @@
+/* Eric Meyer's CSS Reset */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+/* End of Eric Meyer's CSS Reset */
+
+html {
+	height: 100%;
+}
+article, aside, details, figcaption, figure, footer, header, hgroup, main, nav, section, summary {
+	display: block;
+}
+body {
+	font: 14px/18px;
+	font-family: 'Poppins', sans-serif;
+	height: 100%;
+	line-height: 2em;
+}
+
+.wrapper {
+	width: 100%;
+	min-width: 1000px;
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+}
+
+
+/* Header
+-----------------------------------------------------------------------------*/
+.header {
+	height: 50px;
+	background: rgb(215, 235, 245);
+	text-align: center;
+	padding-top: 1%;
+}
+
+
+/* Middle
+-----------------------------------------------------------------------------*/
+.middle {
+	width: 100%;
+	height: 100%;
+	padding: 0 0 10px;
+	position: relative;
+}
+.middle:after {
+	display: table;
+	clear: both;
+	content: '';
+}
+.container {
+	width: 100%;
+	height: 60%;
+	float: center;
+	overflow: hidden;
+	margin-bottom: 20px;
+}
+.content {
+	padding: 0 0 0 50px;
+}
+
+
+/* Left Sidebar
+-----------------------------------------------------------------------------*/
+.left-sidebar {
+	float: left;
+	width: 47%;
+	height: auto;
+	min-height: 150px;
+	max-height: 40em;
+	overflow-y: auto;
+    direction: ltr;
+	margin-left: 10px;
+	/* margin-left: -98%; */
+	position: relative;
+	background: rgb(245, 245, 245);
+	
+}
+
+
+/* Right Sidebar
+-----------------------------------------------------------------------------*/
+.right-sidebar {
+	float: left;
+	width: 50%;
+	height: auto;
+	min-height: 150px;
+	max-height: 40em;
+	overflow-y: auto;
+    direction: ltr;
+	/* margin-left: -98%; */
+	padding-left: 10px;
+	left: 10px; 
+	position: relative;
+	background: rgb(235, 250, 240);
+}
+
+
+/* Footer
+-----------------------------------------------------------------------------*/
+.footer {
+	margin: -100px auto 0;
+	min-width: 1000px;
+	height: 100px;
+	background: rgb(236, 242, 245);
+	position: relative;
+	align-content: flex-start;
+	padding-top: 1%;
+	
+}
+
+#hl {
+
+	margin-right: 20px;
+}
+
+#title {
+	font-size: 2em;
+}
+
+#discl {
+
+	font-size: 0.8em;
+	font-style: italic;
+}

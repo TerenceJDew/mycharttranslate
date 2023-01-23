@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- <meta charset="utf-8" /> -->
+	<!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script><![endif]-->
+	<title>Yale New Haven Health Auto-Translate</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<link href="css/style.css" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
+	<script src="js/libs/axios.min.js"></script>	
+	<script>
+	</script>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+	<header class="header">
+		<img id="hl" src="img/translate.png" height="60%" width=auto>	
+		<strong id="title"> Auto-Translate</strong> 
+	</header><!-- .header-->
+
+	<div class="middle">
+
+		<div class="container">
+			<main class="content">
+				<strong></strong>
+			</main><!-- .content -->
+		</div>
+
+		<aside class="left-sidebar">
+			<strong><h3>Source:</h3></strong> {{source}}
+		</aside><!-- .left-sidebar -->
+
+		<aside class="right-sidebar">
+			<strong><h3>Translation:</h3></strong> {{translation}} </aside><!-- .right-sidebar -->
+
+	</div><!-- .middle-->
+	<h5 id="discl"> This is computer generated translation. Please use only for a reference   </h5>
+</div><!-- .wrapper -->
+
+<footer class="footer">
+		
+		<img src="img/YNHHSLogo.png" height=auto width="40%">
+	</footer><!-- .footer -->
+
+</body>
+
+</html>
