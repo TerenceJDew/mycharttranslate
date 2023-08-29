@@ -8,37 +8,27 @@ var https = require('https');
 var fs = require('fs');
 var enforceHttps = require('koa-sslify');
 var log = require('fancy-log');
-// const send = require('koa-send');
-// const views = require('koa-views');
 const Handlebars = require('handlebars');
-// const koaBetterBody = require('koa-better-body')
 const koaBody = require('koa-body')
-// const translationAPI = require ('./translate.js')
-const translationAPI = require ('./v3_translate.js')
+const translationAPI = require('./v3_translate.js')
 const Iog = require('iog');
-var Base64 = require('js-base64').Base64;
 var b64 = require('base-64');
-// var utf8 = require('to-utf-8');
-var iso88598i = require('iso-8859-8-i');
-// var fs = require('fs');
-// var enforceHttps = require('koa-sslify');
-// var decrypter = require('aes-decrypter').Decrypter;
 const parseJson = require('parse-json');
- 
+
 
 const app = new Koa();
 var router = new Router();
 const logger = new Iog('my-module-name');
 var appData = {
- "translationSource" : " ",
- "translationResults" : " ",
- "SourceLanguage": "",
- "RequestURL": ""
+  "translationSource": " ",
+  "translationResults": " ",
+  "SourceLanguage": "",
+  "RequestURL": ""
 }
 
 const config = {
   "httpPort": 3010,
-  "httpsPort": 1025 
+  "httpsPort": 1025
 }
 
 app
@@ -49,83 +39,91 @@ app
   .use(cors())
   .use(serve('./public'))
   .use(enforceHttps());
-  // .use(enforceHttps({
-    // trustProtoHeader: true
-  // }));
-  
-
-router.get ('api','/api/:text', async (ctx,next) => { 
-  ctx.body = await pageGenerator ();
+// .use(enforceHttps({
+// trustProtoHeader: true
+// }));
 
 
-} )
+router.get('api', '/api/:text', async (ctx, next) => {
+  ctx.body = await pageGenerator();
+})
 
-router.get ('translate','/translate', async (ctx,next) => { 
- log (`/translate endpoint without params`)
- log (`Request Header`)
- log (ctx.request.header)
- ctx.body = "Empty /translate/ endpoint"
+router.get('translate', '/translate', async (ctx, next) => {
+  log(`/translate endpoint without params`)
+  log(`Request Header`)
+  log(ctx.request.header)
+  ctx.body = "Empty /translate/ endpoint"
 
-} )
+})
 
 
-router.get ('encrypt','/encrypt/', async (ctx,next) => { 
-  log (`/encrypt endpoint without params`)
-  log (`Request Header`)
-  log (ctx.request.params)
-  log (ctx.request.header)
-  log (ctx.request.query)
+router.get('encrypt', '/encrypt/', async (ctx, next) => {
+  log(`/encrypt endpoint without params`)
+  log(`Request Header`)
+  log(ctx.request.params)
+  log(ctx.request.header)
+  log(ctx.request.query)
   ctx.body = "Empty /encrypt/ endpoint"
- 
- } )
 
-  router.get ('translate','/translate/:text', async (ctx,next) => {
-    try {
-    log (`Request received`)
-    // log (`Request params: ${ctx.url}`)
-    // log (`Text to Decode:' ${ctx.params.text}`)
-    // let content2 = Base64.decode(ctx.params.text);
-    let decoded = b64.decode (ctx.params.text);
-    // log (`Decoded text: ${decoded}`);
-    // let decodedTxt = iso88598i.decode (decoded)
-    // log (`UTF8 text: ${decodedTxt}`);
-    // log (ctx.params);
-    // log (ctx.params.text)
-    // log (`Request Header`)
-    // log (ctx.request.header)
+})
+
+router.get('translate', '/translate/:text', async (ctx, next) => {
+  try {
+    log(`Request received`)
     
-    appData.translationSource = decoded  
-    // appData.translationSource = decodeURIComponent((ctx.params.text + '').replace(/\+/g, '%20')); 
-    
-    // let content = JSON.stringify ([{'Text' : appData.translationSource}]);
-    let content = JSON.stringify ([{'Text' : decoded}]);
-    // log (`Content: ${content}`)
-    // let content2 = Base64.decode(content);
-    // let content3 = iso88598i.decode (content2);
-    // log (`Translated content: ${content2}`)
-    // log (`Translated content3: ${content3}`)
-    let newText =  await translationAPI.Translate(content)
-    let parsedText = JSON.parse (newText[0].translations[0].text)
-    appData.translationResults = parsedText[0].Text
-    // appData.SourceLanguage=newText[0].detectedLanguage.language
-    appData.RequestURL= decoded
-    
-    
-    ctx.body = await pageGenerator ()
-    log (`Information sent`)
+    let decoded = b64.decode(b64.encode(ctx.params.text));
+    // let decoded = b64.decode(ctx.params.text);
+
+
+    appData.translationSource = formattedText(decoded)
+
+    let content = JSON.stringify([{ 'Text': decoded }]);
+
+    let newText = await translationAPI.Translate(content)
+    let parsedText = JSON.parse(newText[0].translations[0].text)
+    appData.translationResults = formattedText(parsedText[0].Text)
+    appData.RequestURL = decoded
+
+
+    ctx.body = await pageGenerator()
+    log(`Information sent`)
+  }
+  catch (error) {
+    log.error(error)
+  }
+})
+
+function formattedText (translationResults) {
+  let sentences = translationResults.split(".");
+  log(sentences)
+  let paragraphs = []
+  let currentParagraph = 0
+  sentences.forEach((sentence, index) => {
+    if (index % 4 === 0) {
+      if(index !== 0)
+      currentParagraph++
+      paragraphs[currentParagraph] = [`${sentence}`]
+      log(paragraphs)
     }
-    catch (error) {
-      log.error (error)
+    else {
+      paragraphs[currentParagraph] = [...paragraphs[currentParagraph], sentence]
+      log(paragraphs)
     }
-  })
+  });
+  let formattedText = paragraphs.map(sentenceArr => `${sentenceArr.join(".")}
+  
+  `)
+
+  return formattedText.join('');
+}
 
 // router.get('/translate/public/img/(.*)', async ctx => {
 //   serve('./public/img')
 // });  
 
-async function pageGenerator () {
+async function pageGenerator() {
 
-  return new Promise ( (resolve, reject) => {
+  return new Promise((resolve, reject) => {
 
     try {
       var source = `<!DOCTYPE html>
@@ -164,7 +162,8 @@ async function pageGenerator () {
           </aside><!-- .left-sidebar -->
       
           <aside class="right-sidebar">
-            <strong><h3>Translation:</h3></strong> {{translationResults}} </aside><!-- .right-sidebar -->
+            <strong><h3>Translation:</h3></strong> {{translationResults}} 
+            </aside><!-- .right-sidebar -->
       
         </div><!-- .middle-->
         
@@ -178,18 +177,36 @@ async function pageGenerator () {
       </body>
       
       </html>`;
-    var template = Handlebars.compile(source);
- 
-    var result = template(appData);
-    resolve (result)
+
+      // Handlebars.registerHelper('splitTranslation', function (translationResults) {
+      //   let sentences = translationResults.split(".");
+      //   let paragraphs = []
+      //   sentences.forEach((sentence, index) => {
+      //     let currentParagraph = 0
+      //     if (index % 4 === 0 || index === 0) {
+      //       currentParagraph++
+      //       paragraphs[currentParagraph] = [`${sentence}`]
+      //     }
+      //     else {
+      //       paragraphs[currentParagraph] = [...paragraphs[currentParagraph], sentence]
+      //     }
+      //   });
+      //   let formattedText = paragraphs.map(sentenceArr => `${sentenceArr.join(".")}<br></br>`)
+      //   return formattedText;
+      // });
+
+      var template = Handlebars.compile(source);
+
+      var result = template(appData);
+      resolve(result)
     }
 
     catch (error) {
-      reject (error)
+      reject(error)
 
     }
 
-  } )
+  })
 
 
 }
@@ -208,5 +225,5 @@ let msgServ = `  Translate application listening on the following ports:
 - HTTPS: ${config.httpsPort}`
 
 // logger.write(msgServ);
-log (msgServ)
+log(msgServ)
 
