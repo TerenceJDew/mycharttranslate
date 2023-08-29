@@ -44,44 +44,23 @@ app
 // }));
 
 
-router.get('api', '/api/:text', async (ctx, next) => {
-  ctx.body = await pageGenerator();
-})
 
-router.get('translate', '/translate', async (ctx, next) => {
-  log(`/translate endpoint without params`)
-  log(`Request Header`)
-  log(ctx.request.header)
-  ctx.body = "Empty /translate/ endpoint"
-
-})
-
-
-router.get('encrypt', '/encrypt/', async (ctx, next) => {
-  log(`/encrypt endpoint without params`)
-  log(`Request Header`)
-  log(ctx.request.params)
-  log(ctx.request.header)
-  log(ctx.request.query)
-  ctx.body = "Empty /encrypt/ endpoint"
-
-})
 
 router.get('translate', '/translate/:text', async (ctx, next) => {
   try {
     log(`Request received`)
-    
+
     let decoded = b64.decode(b64.encode(ctx.params.text));
     // let decoded = b64.decode(ctx.params.text);
 
 
-    appData.translationSource = formattedText(decoded)
+    appData.translationSource = joinedParagraphs(decoded)
 
     let content = JSON.stringify([{ 'Text': decoded }]);
 
     let newText = await translationAPI.Translate(content)
     let parsedText = JSON.parse(newText[0].translations[0].text)
-    appData.translationResults = formattedText(parsedText[0].Text)
+    appData.translationResults = joinedParagraphs(parsedText[0].Text)
     appData.RequestURL = decoded
 
 
@@ -93,33 +72,27 @@ router.get('translate', '/translate/:text', async (ctx, next) => {
   }
 })
 
-function formattedText (translationResults) {
+function joinedParagraphs(translationResults) {
   let sentences = translationResults.split(".");
   log(sentences)
   let paragraphs = []
   let currentParagraph = 0
   sentences.forEach((sentence, index) => {
     if (index % 4 === 0) {
-      if(index !== 0)
-      currentParagraph++
+      if (index !== 0)
+        currentParagraph++
       paragraphs[currentParagraph] = [`${sentence}`]
       log(paragraphs)
     }
     else {
       paragraphs[currentParagraph] = [...paragraphs[currentParagraph], sentence]
-      log(paragraphs)
     }
   });
-  let formattedText = paragraphs.map(sentenceArr => `${sentenceArr.join(".")}
-  
-  `)
-
-  return formattedText.join('');
+  let joinedParagraphs = paragraphs.map(sentenceArr => `${sentenceArr.join(".")}.`)
+  log(joinedParagraphs)
+  return joinedParagraphs;
 }
 
-// router.get('/translate/public/img/(.*)', async ctx => {
-//   serve('./public/img')
-// });  
 
 async function pageGenerator() {
 
@@ -150,19 +123,19 @@ async function pageGenerator() {
         </header><!-- .header-->
       
         <div class="middle">
-      
-          <div class="container">
-            <main class="content">
-              <strong></strong>
-            </main><!-- .content -->
-          </div>
-      
+           
           <aside class="left-sidebar">
-            <strong><h3>Source:</h3></strong> {{translationSource}}
+            <b><h3>Source:</h3></b>
+            {{#each translationSource}} 
+            <p>{{this}}</p>
+            {{/each}} 
           </aside><!-- .left-sidebar -->
       
           <aside class="right-sidebar">
-            <strong><h3>Translation:</h3></strong> {{translationResults}} 
+            <b><h3>Translation:</h3></b> 
+            {{#each translationResults}} 
+            <p>{{this}}</p>
+            {{/each}}
             </aside><!-- .right-sidebar -->
       
         </div><!-- .middle-->
@@ -177,23 +150,6 @@ async function pageGenerator() {
       </body>
       
       </html>`;
-
-      // Handlebars.registerHelper('splitTranslation', function (translationResults) {
-      //   let sentences = translationResults.split(".");
-      //   let paragraphs = []
-      //   sentences.forEach((sentence, index) => {
-      //     let currentParagraph = 0
-      //     if (index % 4 === 0 || index === 0) {
-      //       currentParagraph++
-      //       paragraphs[currentParagraph] = [`${sentence}`]
-      //     }
-      //     else {
-      //       paragraphs[currentParagraph] = [...paragraphs[currentParagraph], sentence]
-      //     }
-      //   });
-      //   let formattedText = paragraphs.map(sentenceArr => `${sentenceArr.join(".")}<br></br>`)
-      //   return formattedText;
-      // });
 
       var template = Handlebars.compile(source);
 
