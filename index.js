@@ -50,8 +50,8 @@ router.get('translate', '/translate/:text', async (ctx, next) => {
   try {
     log(`Request received`)
 
-    let decoded = b64.decode(b64.encode(ctx.params.text));
-    // let decoded = b64.decode(ctx.params.text);
+    // let decoded = b64.decode(b64.encode(ctx.params.text));
+    let decoded = b64.decode(ctx.params.text);
 
 
     appData.translationSource = joinedParagraphs(decoded)
